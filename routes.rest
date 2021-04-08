@@ -1,0 +1,2 @@
+GET https://api.openweathermap.org/data/2.5/weather?q=$arizona&appid=2dd3e3a73be6e7e3fb3cf7521bf057b8
+Content-Type: application/json
