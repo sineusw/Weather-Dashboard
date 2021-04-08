@@ -70,7 +70,6 @@ body {
 
 .sidebox-inner {
   width: 400px; 
-  height: 400px; 
   border-radius: 8px; 
   color: black; 
   display: flex; 
@@ -100,7 +99,45 @@ body {
   width: 200px; 
   background-color: white; 
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-  height: 200px; 
   margin: 20px;
   text-align: center; 
+  padding: 15px 10px;
+
+}
+
+.uv-container {
+  display: flex;
+  align-items: center; 
+  justify-content: center;
+
+}
+
+
+.uv-index {
+  width: 40px; 
+  height: 20px;
+  display: inline-block; 
+  border-radius: 3px;
+  margin: 0 5px;
+  
+}
+
+
+.low {
+  background:  linear-gradient(to left, green , white); 
+}
+.moderate {
+  background: linear-gradient(to left, yellow , white); 
+}
+
+.high {
+  background: linear-gradient(to left ,orange, white); 
+}
+
+.very-high {
+  background:  linear-gradient(to left,red , white);
+}
+
+.extreme {
+  background: linear-gradient(to left, purple , white)
 }

@@ -1,14 +1,29 @@
 const searchButton = document.querySelector(".button")
 const sideBox = document.querySelector('.side-box')
 const forecastContainer = document.querySelector('.forecast-container')
+const historyContainer = document.querySelector('.history-container')
 searchButton.addEventListener("click", function(event){
     event.preventDefault() 
     callApi()
 })
 
+function clearUI(){
+    sideBox.innerHTML = ""; 
+    forecastContainer.innerHTML = "";
+}
+
+function showHistory(){
+    const history = JSON.parse(localStorage.getItem('history')); 
+
+    history.forEach(query =>{
+        historyContainer.innerHTML += `<li>${query}</li>`;
+    })
+}
+
 async function callApi(){
     var cityName = document.querySelector(".search-bar").value
-    saveToLocalStorage(cityName)
+    saveToLocalStorage(cityName); 
+    showHistory();
     let latitude, longitude, responseData; 
    await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&appid=2dd3e3a73be6e7e3fb3cf7521bf057b8`)
     .then(res => {
@@ -26,6 +41,7 @@ async function callApi(){
         
     }); 
     const uvResult = await getUVData(latitude, longitude); 
+    clearUI();
     showResults(responseData, uvResult)
 
 } 
@@ -40,40 +56,56 @@ async function getUVData(lat, long){
 return result; 
 }
 
+function uvIdxColor(value){
+let risk; 
+    if(value >= 0 && value <= 2) risk= "low"; 
+    else if (value >= 3 && value <= 5) risk = "moderate";
+    else if(value  >= 6 && value <= 7) risk = "high";
+    else if (value >= 8 && value <= 10) risk = "very-high";
+     else  risk = "extreme"
+return risk; 
+}
+
 function showResults({list, city}, uvResult){
     //loop through the list 
     list.forEach(({main, weather, dt_txt:date, name, wind}, idx) => {
         const {temp, feels_like:feelsLike, humidity} = main; 
         const {main:mainWeather, description, icon} = weather[0];
         const {speed:windSpeed} = wind;
-        // const {value:uvIndex} = uvResult;
+        const {value:uvIndex} = uvResult;
+        console.log(typeof uvIndex)
+        let uvRisk = uvIdxColor(uvIndex);
+        
       
         let result; 
         if(idx === 0){
         
         result = `
         <div class="sidebox-inner">
-        <h2>Showing Results from ${city.name}}</h2>
+        <h2>Showing Results from ${city.name}</h2>
+        <img src="http://openweathermap.org/img/wn/${icon}@2x.png" />
         <p> Temperature: ${temp} K </p>
         <p> Feels Like: ${feelsLike} K </p>
+        <p> Humidity: ${humidity} % </p>
         <p> Date: ${date} </p>
         <p> ${mainWeather} </p>
         <p> Wind Speed: ${windSpeed} </p>
-        <p> UV index: ${uvResult.value} </p>
-        <img src="http://openweathermap.org/img/wn/${icon}@2x.png" />
+        <p class="uv-container"> UV index: ${uvIndex} <span class='uv-index ${uvRisk}'></span> </p>
         </div>
         `
-        sideBox.innerHTML += result; 
+        sideBox.innerHTML = result; 
 
         } else {
             result = `
             <div class="forecast">
             <p>${date}<p/>
             <p> Temperature: ${temp} K </p>
-            <p> ${mainWeather} </p>
+            <p> Humidity: ${humidity} </p>
+            <p> ${mainWeather} % </p>
             <img src="http://openweathermap.org/img/wn/${icon}@2x.png" />
             </div>
             `
+
             forecastContainer.innerHTML += result; 
         }
     })
