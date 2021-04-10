@@ -1,31 +1,47 @@
 const searchButton = document.querySelector(".button")
 const sideBox = document.querySelector('.side-box')
 const forecastContainer = document.querySelector('.forecast-container')
-const historyContainer = document.querySelector('.history-container')
+const historyContainer = document.querySelector('.history-list')
 searchButton.addEventListener("click", function(event){
     event.preventDefault() 
     callApi()
 })
+
+function clearSearch(){
+    document.querySelector('.search-bar').value = "";
+}
 
 function clearUI(){
     sideBox.innerHTML = ""; 
     forecastContainer.innerHTML = "";
 }
 
+
+function searchQuery(evt){
+    const target = evt.target; 
+    if(target.className === "query"){
+        console.log(evt.target)
+        const query = target.innerText;
+        callApi(query)
+    }
+}
+
 function showHistory(){
     const history = JSON.parse(localStorage.getItem('history')); 
 
     history.forEach(query =>{
-        historyContainer.innerHTML += `<li>${query}</li>`;
+        historyContainer.innerHTML += `<li class="query">${query}</li>`
     })
+
+    historyContainer.addEventListener('click', searchQuery);
 }
 
-async function callApi(){
+async function callApi(query){
     var cityName = document.querySelector(".search-bar").value
     saveToLocalStorage(cityName); 
     showHistory();
     let latitude, longitude, responseData; 
-   await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&appid=2dd3e3a73be6e7e3fb3cf7521bf057b8`)
+   await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${!query? cityName: query}&appid=2dd3e3a73be6e7e3fb3cf7521bf057b8`)
     .then(res => {
         return res.json()
     })
@@ -43,6 +59,7 @@ async function callApi(){
     const uvResult = await getUVData(latitude, longitude); 
     clearUI();
     showResults(responseData, uvResult)
+    clearSearch();
 
 } 
 
@@ -130,3 +147,7 @@ function saveToLocalStorage(query){
     }
 }
 
+
+document.addEventListener('DOMContentLoaded', ()=>{
+showHistory()
+})

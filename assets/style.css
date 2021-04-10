@@ -141,3 +141,51 @@ body {
 .extreme {
   background: linear-gradient(to left, purple , white)
 }
+
+
+.main {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.results {
+  flex: 0.8;
+}
+
+.history-container {
+  flex: 0.2;
+  background-color: white;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+.history-container > h2 {
+  color: black
+}
+
+.history-list {
+  list-style-type: none; 
+}
+
+.history-list li {
+  border-top: 1px solid black;
+  transition: all 0.2s ease-in-out 
+   
+}
+
+.history-list li:hover {
+  cursor: pointer
+}
+
+.history-list li:hover {
+  transform: scale(1.2);
+
+}
+
+@media(max-width: 600px){
+  .results {
+    width: 100%;
+  }
+  .history-container {
+    width: 100%;
+  }
+}
